@@ -132,17 +132,54 @@ def wiki_zh(dirname):
     data.to_csv(dirname+'.csv')
     data['title_cut'] = data['title'].apply(lambda x: jieba_cut(x))
     data['text_cut'] = data['text'].apply(lambda x: jieba_cut(x))
+    data.to_csv(dirname+'.title'+'.tsv', columns=['title_cut'], sep='\t', index=False, header=False)
+    data.to_csv(dirname+'.text'+'.tsv', columns=['text_cut'], sep='\t', index=False, header=False)
+    return
+
+
+def new2016zh(filename):
+    i = 0
+    news_id = []
+    keywords = []
+    desc= []
+    title = []
+    source = []
+    time = []
+    content = []
+    with open(filename, 'r') as fin:
+        line = fin.readline()
+        while line is not None and line != '':
+            data = json.loads(line)
+            # print(i, data)
+            news_id.append(data['news_id'])
+            keywords.append(data['keywords'])
+            desc.append(data['desc'])
+            title.append(data['title'])
+            source.append(data['source'])
+            time.append(data['time'])
+            content.append(data['content'])
+            line = fin.readline()
+            i += 1
+    data = pd.DataFrame({'news_id': news_id, 'keywords': keywords, 'desc': desc, 'title': title, 'source': source, 'time': time, 'content': content})
+    print(data.head())
+    data.to_csv(filename+'.csv')
+    data['desc_cut'] = data['desc'].apply(lambda x: jieba_cut(x))
+    data['title_cut'] = data['title'].apply(lambda x: jieba_cut(x))
+    data['content_cut'] = data['content'].apply(lambda x: jieba_cut(x))
+    data.to_csv(filename+'.desc'+'.tsv', columns=['desc_cut'], sep='\t', index=False, header=False)
     data.to_csv(filename+'.title'+'.tsv', columns=['title_cut'], sep='\t', index=False, header=False)
-    data.to_csv(filename+'.text'+'.tsv', columns=['text_cut'], sep='\t', index=False, header=False)
+    data.to_csv(filename+'.content'+'.tsv', columns=['content_cut'], sep='\t', index=False, header=False)
     return
 
 
 if __name__ == '__main__':
-    baike_qa2019('chinese-nlp-corpus/baike_qa2019/baike_qa_train.json')
-    baike_qa2019('chinese-nlp-corpus/baike_qa2019/baike_qa_valid.json')
-    translation2019zh('chinese-nlp-corpus/translation2019zh/translation2019zh_train.json')
-    translation2019zh('chinese-nlp-corpus/translation2019zh/translation2019zh_valid.json')
-    webtext2019zh('chinese-nlp-corpus/webtext2019zh/web_text_zh_train.json')
-    webtext2019zh('chinese-nlp-corpus/webtext2019zh/web_text_zh_testa.json')
-    webtext2019zh('chinese-nlp-corpus/webtext2019zh/web_text_zh_valid.json')
-    wiki_zh('chinese-nlp-corpus/wiki_zh')
+    # baike_qa2019('chinese-nlp-corpus/baike_qa2019/baike_qa_train.json')
+    # baike_qa2019('chinese-nlp-corpus/baike_qa2019/baike_qa_valid.json')
+    # translation2019zh('chinese-nlp-corpus/translation2019zh/translation2019zh_train.json')
+    # translation2019zh('chinese-nlp-corpus/translation2019zh/translation2019zh_valid.json')
+    # webtext2019zh('chinese-nlp-corpus/webtext2019zh/web_text_zh_train.json')
+    # webtext2019zh('chinese-nlp-corpus/webtext2019zh/web_text_zh_testa.json')
+    # webtext2019zh('chinese-nlp-corpus/webtext2019zh/web_text_zh_valid.json')
+    # wiki_zh('chinese-nlp-corpus/wiki_zh')
+    # new2016zh('chinese-nlp-corpus/new2016zh/news2016zh_train.json')
+    # new2016zh('chinese-nlp-corpus/new2016zh/news2016zh_valid.json')
