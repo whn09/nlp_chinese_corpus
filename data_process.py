@@ -113,27 +113,28 @@ def wiki_zh(dirname):
     subdirs = os.listdir(dirname)
     for subdir in subdirs:
         subdir = os.path.join(dirname, subdir)
-        filenames = os.listdir(subdir)
-        for filename in filenames:
-            filename = os.path.join(subdir, filename)
-            with open(filename, 'r') as fin:
-                line = fin.readline()
-                while line is not None and line != '':
-                    data = json.loads(line)
-                    # print(i, data)
-                    id.append(data['id'])
-                    url.append(data['url'])
-                    title.append(data['title'])
-                    text.append(data['text'].replace('\n', '\\n'))
+        if os.path.isdir(subdir):
+            filenames = os.listdir(subdir)
+            for filename in filenames:
+                filename = os.path.join(subdir, filename)
+                with open(filename, 'r') as fin:
                     line = fin.readline()
-                    i += 1
+                    while line is not None and line != '':
+                        data = json.loads(line)
+                        # print(i, data)
+                        id.append(data['id'])
+                        url.append(data['url'])
+                        title.append(data['title'])
+                        text.append(data['text'].replace('\n', '\\n'))
+                        line = fin.readline()
+                        i += 1
     data = pd.DataFrame({'id': id, 'url': url, 'title': title, 'text': text})
     print(data.head())
-    data.to_csv(dirname+'.csv')
+    data.to_csv(dirname+'/'+dirname+'.csv')
     data['title_cut'] = data['title'].apply(lambda x: jieba_cut(x))
     data['text_cut'] = data['text'].apply(lambda x: jieba_cut(x))
-    data.to_csv(dirname+'.title'+'.tsv', columns=['title_cut'], sep='\t', index=False, header=False)
-    data.to_csv(dirname+'.text'+'.tsv', columns=['text_cut'], sep='\t', index=False, header=False)
+    data.to_csv(dirname+'/'+dirname+'.title'+'.tsv', columns=['title_cut'], sep='\t', index=False, header=False)
+    data.to_csv(dirname+'/'+dirname+'.text'+'.tsv', columns=['text_cut'], sep='\t', index=False, header=False)
     return
 
 
